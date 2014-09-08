@@ -9,6 +9,8 @@ router.get '/', (req, res) ->
 router.post '/finish', (req, res) ->
   console.log 'POST to /finish'
   console.log req
+  console.log '==================='
+  console.log 'commits: ', JSON.stringify req.body.commits, null, 2
   res.send 'ok'
 
 
