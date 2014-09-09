@@ -38,7 +38,8 @@ router.post '/finish', (req, res) ->
       qGetCommit({user: user, repo: repo, sha: parent.sha})
 
     Q.all(qParentCommits).then (parentCommits) ->
-      storyIds = _.map parentCommits, parseCommitMessage
+      console.log 'parent commits', parentCommits
+      storyIds = _.map parentCommits, (c) -> parseCommitMessage(c)
       return _.compact(storyIds)[0]
 
 
