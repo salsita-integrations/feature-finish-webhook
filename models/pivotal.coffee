@@ -1,5 +1,6 @@
 Q = require('q')
 sa = require('superagent')
+_ = require('lodash')
 
 ROOT_URL = "https://www.pivotaltracker.com/services/v5"
 
