@@ -3,6 +3,7 @@ router = express.Router()
 Q = require('q')
 _ = require('lodash')
 debug = require('debug')('feature_finish')
+pt = require('../models/pivotal')
 
 
 Q.longStackSupport = true
@@ -55,6 +56,9 @@ router.post '/finish', (req, res) ->
 
     .then (ids) ->
       console.log 'story ids', ids
+      Q.all _.map ids, (id) -> pt.setStoryState(id, 'finished')
+
+    .then ->
       res.send 'ok'
 
     .fail (err) ->
