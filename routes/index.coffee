@@ -25,7 +25,7 @@ router.post '/finish', (req, res) ->
   console.log 'commits: ', JSON.stringify req.body.commits, null, 2
 
   try
-    repo = octo.Repository req.body.repository.full_name
+    repo = octo.repo req.body.repository.full_name
   catch e
     console.error e
     return res.send 500
