@@ -37,7 +37,7 @@ router.post '/finish', (req, res) ->
       merges = _.filter commits, ({parents}) -> parents.length > 1
       console.log 'merges', merges
       parent_tuples = _.map merges, (merge) ->
-        _.map merge.parents, (parent) ->
+        Q.all _.map merge.parents, (parent) ->
           qGetCommit({user: user, repo: repo, sha: merge.sha})
       return Q.all(parent_tuples)
 
