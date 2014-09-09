@@ -18,23 +18,27 @@ parseCommitMessage = (commit) ->
 
 router.post '/finish', (req, res) ->
   console.log 'POST to /finish'
-  octo = req.app.get 'octoclient'
-  console.log 'octo', octo
-  #console.log req.body
-  #console.log '==================='
+
+  ghclient = req.app.get 'github_client'
   console.log 'commits: ', JSON.stringify req.body.commits, null, 2
 
-  repo = octo.repo req.body.repository.full_name
-  qGetCommit = Q.nbind(repo.get_commit, repo)
+  gdapi = github.getGitdataApi()
+  qGetCommit = Q.nbind gdapi.getCommit, gdapi
+  [user, repo] = req.body.repository.full_name.split '/'
 
-  Q.all((qGetCommit(commit.id) for commit in req.body.commits))
+  commits = _.map req.body.commits, (commit) ->
+    qGetCommit({user: user, repo: repo, sha: commit.id})
+
+
+  Q.all(commits)
 
     .then (commits) ->
       console.log 'commits', commits.length
       merges = _.filter commits, ({parents}) -> parents.length > 1
       console.log 'merges', merges
       parent_tuples = _.map merges, (commit) ->
-        (qGetCommit(merge.sha) for parent in commit.parents)
+        _.map commit.parents, (parent) ->
+          qGetCommit({user: user, repo: repo, sha: merge.sha})
       return Q.all(parent_tuples)
 
     .then (tuples) ->
