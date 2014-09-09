@@ -22,7 +22,7 @@ router.post '/finish', (req, res) ->
   ghclient = req.app.get 'github_client'
   console.log 'commits: ', JSON.stringify req.body.commits, null, 2
 
-  gdapi = github.getGitdataApi()
+  gdapi = ghclient.getGitdataApi()
   qGetCommit = Q.nbind gdapi.getCommit, gdapi
   [user, repo] = req.body.repository.full_name.split '/'
 
