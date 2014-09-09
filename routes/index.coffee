@@ -17,8 +17,8 @@ parseCommitMessage = (commit) ->
 
 
 router.post '/finish', (req, res) ->
-  octo = req.app.get 'octoclient'
   console.log 'POST to /finish'
+  octo = req.app.get 'octoclient'
   console.log req
   console.log '==================='
   console.log 'commits: ', JSON.stringify req.body.commits, null, 2
