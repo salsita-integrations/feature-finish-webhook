@@ -42,9 +42,9 @@ router.post '/finish', (req, res) ->
       return Q.all(parent_tuples)
 
     .then (tuples) ->
-      console.log 'tuples', tuples
+      console.log 'tuples', JSON.stringify tuples, null, 2
       story_finish_commits = _.filter tuples, (tuple) ->
-        _.filter tuple, parseCommitMessage
+        _.filter tuple, (commit) -> parseCommitMessage(commit)
       console.log 'story finish commits', story_finish_commits
       stories_to_finish = (parseCommitMessage(c) for c in story_finish_commits)
       console.log 'stories to finish', stories_to_finish
