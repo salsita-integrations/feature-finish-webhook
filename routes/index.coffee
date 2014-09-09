@@ -47,6 +47,7 @@ router.post '/finish', (req, res) ->
       res.send 'ok'
 
     .fail (err) ->
+      console.log "error", err
       res.send 500, err
 
 
