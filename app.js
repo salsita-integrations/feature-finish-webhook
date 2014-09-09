@@ -15,7 +15,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-var GithubApi= require('github');
+var GitHubApi = require('github');
 var github = new GitHubApi({
   version: "3.0.0",
   debug: true
