@@ -15,6 +15,10 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+var github = require('octonode');
+var client = github.client(process.env.GITHUB_TOKEN);
+app.set('octoclient', client);
+
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
