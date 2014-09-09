@@ -40,6 +40,7 @@ router.post '/finish', (req, res) ->
     Q.all(qParentCommits).then (parentCommits) ->
       console.log 'parent commits', parentCommits
       storyIds = _.map parentCommits, (c) -> parseCommitMessage(c)
+      console.log 'story ids for merge', storyIds
       return _.compact(storyIds)[0]
 
 
