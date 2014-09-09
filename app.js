@@ -21,7 +21,7 @@ var github = new GitHubApi({
   debug: true
 });
 github.authenticate({type: "oauth", token: process.env.GITHUB_TOKEN});
-app.set('github_client', client);
+app.set('github_client', github);
 
 app.use(favicon());
 app.use(logger('dev'));
