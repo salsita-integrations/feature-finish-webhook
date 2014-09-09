@@ -29,8 +29,8 @@ exports.setStoryState = (storyId, state) ->
           .send({current_state: state})
           .end (err, res) ->
             if err or not res.ok
-              return Q.reject(err or new Error(res.text))
-            Q.resolve(JSON.parse(res.text))
+              return defer.reject(err or new Error(res.text))
+            defer.resolve(JSON.parse(res.text))
         defer.promise
       # Get all promises regardless of their resolution state.
       Q.allSettled(qStories)
