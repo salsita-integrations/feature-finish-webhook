@@ -22,8 +22,10 @@ parseCommitMessage = (commit) ->
   return storyId.trim()
 
 
+# GitHub push webhook. The idea id to detect merges into develop
 router.post '/finish', (req, res) ->
   ghclient = req.app.get 'github_client'
+  console.log 'req.body.ref', req.body.ref
   debug 'commits: ', JSON.stringify req.body.commits, null, 2
 
   getMergedStoryId = (mergeComit) ->
@@ -40,6 +42,7 @@ router.post '/finish', (req, res) ->
   qGetCommit = Q.nbind gdapi.getCommit, gdapi
   [user, repo] = req.body.repository.full_name.split '/'
 
+  # Get commit details from GH (to get parents)
   commits = _.map req.body.commits, (commit) ->
     qGetCommit({user: user, repo: repo, sha: commit.id})
 
