@@ -13,6 +13,7 @@ router.get '/', (req, res) ->
 
 
 parseCommitMessage = (commit) ->
+  console.log 'parsing commit message', commit.message
   matches = _.filter commit.message.split('\n'), (line) ->
     line.toLowerCase().indexOf('story-id') >= 0
   return null unless matches.length > 0
@@ -37,7 +38,7 @@ router.post '/finish', (req, res) ->
       qGetCommit({user: user, repo: repo, sha: parent.sha})
 
     Q.all(qParentCommits).then (parentCommits) ->
-      debug 'parent commits', parentCommits
+      console.log 'parent commits', (sha for {sha} in parentCommits)
       storyIds = _.map parentCommits, (c) -> parseCommitMessage(c)
       debug 'story ids for merge', storyIds
       return _.compact(storyIds)[0]
@@ -46,10 +47,10 @@ router.post '/finish', (req, res) ->
   Q.all(commits)
 
     .then (commits) ->
-      debug.log 'commits', commits.length
+      console.log 'commits', commits.length
 
       merges = _.filter commits, ({parents}) -> parents.length > 1
-      debug.log 'merges', merges
+      console.log 'merges', (id for {id} in merges)
 
       qStoryIds = (getMergedStoryId(merge) for merge in merges)
       return Q.all(qStoryIds)
