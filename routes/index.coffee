@@ -2,6 +2,7 @@ express = require('express')
 router = express.Router()
 Q = require('q')
 _ = require('lodash')
+octo = require('octonode')
 
 
 router.get '/', (req, res) ->
@@ -19,11 +20,12 @@ parseCommitMessage = (commit) ->
 router.post '/finish', (req, res) ->
   console.log 'POST to /finish'
   octo = req.app.get 'octoclient'
-  console.log req.body
-  console.log '==================='
+  #console.log req.body
+  #console.log '==================='
   console.log 'commits: ', JSON.stringify req.body.commits, null, 2
 
   repo = octo.Repository req.body.repository.full_name
+  console.log "octo repo", octo
   qGetCommit = Q.nbind(octo.repo.get_commit, octo.repo)
 
   Q.all((qGetCommit(commit.id) for commit in req.body.commits))
