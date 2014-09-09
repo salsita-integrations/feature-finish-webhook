@@ -18,6 +18,7 @@ getProjects = ->
 exports.setStoryState = (storyId, state) ->
   getProjects()
     .then (projects) ->
+      console.log 'projects', (id for {id} in projects)
       qStories = _.map projects, (project) ->
         defer = Q.defer()
         sa
@@ -33,11 +34,14 @@ exports.setStoryState = (storyId, state) ->
       Q.allSettled(qStories)
 
     .then (settledPromises) ->
+      console.log 'settled promises', settledPromises
       # Let's see if we have any resolved promises.
       p = _.find settledPromises, state: "fulfilled"
       if not p
+        console.log "No relevant story found..."
         return Q.rejected(new Error("Could not find story #{story_id}."))
       # Yay, updating story state succeeded.
+      console.log "Story state updated!"
       return Q("done")
 
     .fail (err) ->
