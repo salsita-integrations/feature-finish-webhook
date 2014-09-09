@@ -10,12 +10,13 @@ getProjects = ->
     .set('X-TrackerToken', process.env.PT_TOKEN)
     .end (err, res) ->
       if err or not res.ok
-        return Q.reject(err or new Error(res.text))
-      Q.resolve(JSON.parse(res.text))
+        return defer.reject(err or new Error(res.text))
+      defer.resolve(JSON.parse(res.text))
   return defer.promise
 
 
 exports.setStoryState = (storyId, state) ->
+  console.log 'PT setStoryState', storyId, state
   getProjects()
     .then (projects) ->
       console.log 'projects', (id for {id} in projects)
