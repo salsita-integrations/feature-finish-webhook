@@ -24,13 +24,8 @@ router.post '/finish', (req, res) ->
   #console.log '==================='
   console.log 'commits: ', JSON.stringify req.body.commits, null, 2
 
-  try
-    repo = octo.repo req.body.repository.full_name
-  catch e
-    console.error e
-    return res.send 500
-  console.log "octo repo", octo
-  qGetCommit = Q.nbind(octo.repo.get_commit, octo.repo)
+  repo = octo.repo req.body.repository.full_name
+  qGetCommit = Q.nbind(repo.get_commit, repo)
 
   Q.all((qGetCommit(commit.id) for commit in req.body.commits))
 
