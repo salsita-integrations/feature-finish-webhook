@@ -18,7 +18,7 @@ app.set('view engine', 'jade');
 var GitHubApi = require('github');
 var github = new GitHubApi({
   version: "3.0.0",
-  debug: true
+  debug: false
 });
 github.authenticate({type: "oauth", token: process.env.GITHUB_TOKEN});
 app.set('github_client', github);

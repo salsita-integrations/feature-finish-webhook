@@ -25,14 +25,6 @@ router.post '/finish', (req, res) ->
   ghclient = req.app.get 'github_client'
   debug 'commits: ', JSON.stringify req.body.commits, null, 2
 
-  gdapi = ghclient.getGitdataApi()
-  qGetCommit = Q.nbind gdapi.getCommit, gdapi
-  [user, repo] = req.body.repository.full_name.split '/'
-
-  commits = _.map req.body.commits, (commit) ->
-    qGetCommit({user: user, repo: repo, sha: commit.id})
-
-
   getMergedStoryId = (mergeComit) ->
     qParentCommits = _.map mergeComit.parents, (parent) ->
       qGetCommit({user: user, repo: repo, sha: parent.sha})
@@ -43,6 +35,12 @@ router.post '/finish', (req, res) ->
       debug 'story ids for merge', storyIds
       return _.compact(storyIds)[0]
 
+  gdapi = ghclient.getGitdataApi()
+  qGetCommit = Q.nbind gdapi.getCommit, gdapi
+  [user, repo] = req.body.repository.full_name.split '/'
+
+  commits = _.map req.body.commits, (commit) ->
+    qGetCommit({user: user, repo: repo, sha: commit.id})
 
   Q.all(commits)
 
