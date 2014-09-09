@@ -16,7 +16,7 @@ parseCommitMessage = (commit) ->
     line.toLowerCase().indexOf('story-id') >= 0
   return null unless matches.length > 0
   storyId = _.last(matches).split(':')[1]
-  return storyId
+  return storyId.trim()
 
 
 router.post '/finish', (req, res) ->
