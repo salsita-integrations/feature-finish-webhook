@@ -4,6 +4,9 @@ Q = require('q')
 _ = require('lodash')
 
 
+Q.longStackSupport = true
+
+
 router.get '/', (req, res) ->
   res.render('index', { title: 'Express' })
 
@@ -30,25 +33,28 @@ router.post '/finish', (req, res) ->
     qGetCommit({user: user, repo: repo, sha: commit.id})
 
 
+  getMergedStoryId = (mergeComit) ->
+    qParentCommits = _.map mergeComit.parents, (parent) ->
+      qGetCommit({user: user, repo: repo, sha: parent.sha})
+
+    Q.all(qParentCommits).then (parentCommits) ->
+      storyIds = _.map parentCommits, parseCommitMessage
+      return _.compact(storyIds)[0]
+
+
   Q.all(commits)
 
     .then (commits) ->
       console.log 'commits', commits.length
+
       merges = _.filter commits, ({parents}) -> parents.length > 1
       console.log 'merges', merges
-      parent_tuples = _.map merges, (merge) ->
-        Q.all _.map merge.parents, (parent) ->
-          qGetCommit({user: user, repo: repo, sha: merge.sha})
-      return Q.all(parent_tuples)
 
-    .then (tuples) ->
-      console.log 'tuples', JSON.stringify tuples, null, 2
-      story_finish_commits = _.filter tuples, (tuple) ->
-        _.filter tuple, (commit) -> parseCommitMessage(commit)
-      console.log 'story finish commits', story_finish_commits
-      stories_to_finish = (parseCommitMessage(c) for c in story_finish_commits)
-      console.log 'stories to finish', stories_to_finish
+      qStoryIds = (getMergedStoryId(merge) for merge in merges)
+      return Q.all(qStoryIds)
 
+    .then (ids) ->
+      console.log 'story ids', ids
       res.send 'ok'
 
     .fail (err) ->
