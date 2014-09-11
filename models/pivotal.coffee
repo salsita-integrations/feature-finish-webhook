@@ -14,7 +14,7 @@ getProjects = ->
   }
   console.log options
   request options, (err, res, body) ->
-    if err or not res.statusCode != 200
+    if err or res.statusCode != 200
       console.error 'getProjects error:', (err or body)
       return defer.reject(err or new Error(body))
     defer.resolve(JSON.parse(res.text))
@@ -45,7 +45,7 @@ exports.setStoryState = (storyId, state) ->
           }
         }
         request options, (err, res, body) ->
-          if err or not res.statusCode != 200
+          if err or res.statusCode != 200
             console.error "update stpry error:", (err or body)
             return defer.reject(err or new Error(body))
           defer.resolve(JSON.parse(res.text))
