@@ -72,6 +72,9 @@ router.post '/finish', (req, res) ->
 
     .then (ids) ->
       console.log 'story ids', ids
+      # Filter out `undefined` values (happens when no parent commit 
+      # in the merge has `story-id` in the commit msg.
+      ids = _.compact ids
       Q.all _.map ids, (id) -> pt.setStoryState(id, 'finished')
 
     .then ->
