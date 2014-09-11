@@ -17,7 +17,7 @@ getProjects = ->
     if err or res.statusCode != 200
       console.error 'getProjects error:', (err or body)
       return defer.reject(err or new Error(body))
-    defer.resolve(JSON.parse(res.text))
+    defer.resolve(JSON.parse(body))
   return defer.promise
 
 
@@ -48,7 +48,7 @@ exports.setStoryState = (storyId, state) ->
           if err or res.statusCode != 200
             console.error "update stpry error:", (err or body)
             return defer.reject(err or new Error(body))
-          defer.resolve(JSON.parse(res.text))
+          defer.resolve(JSON.parse(body))
         defer.promise
       # Get all promises regardless of their resolution state (so that we can
       # ignore errors).
