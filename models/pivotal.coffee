@@ -46,7 +46,7 @@ exports.setStoryState = (storyId, state) ->
         }
         request options, (err, res, body) ->
           if err or res.statusCode != 200
-            console.error "update stpry error:", (err or body)
+            console.error "update story error:", (err or body)
             return defer.reject(err or new Error(body))
           defer.resolve(JSON.parse(body))
         defer.promise
