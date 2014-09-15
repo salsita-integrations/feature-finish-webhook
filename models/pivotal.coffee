@@ -61,7 +61,7 @@ exports.setStoryState = (storyId, state) ->
       p = _.find settledPromises, state: "fulfilled"
       if not p
         console.log "No relevant story found..."
-        return Q.reject(new Error("Could not find story #{storyId}."))
+        return Q.reject({id: storyId})
       # Yay, updating story state succeeded!
       console.log "Story state updated!"
       return Q("done")

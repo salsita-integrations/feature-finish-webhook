@@ -33,52 +33,21 @@ router.post '/finish', (req, res) ->
 
   debug 'commits: ', JSON.stringify req.body.commits, null, 2
 
-  getMergedStoryId = (mergeCommit) ->
-    # Get parent commits of `mergeCommit`.
-    qParentCommits = _.map mergeCommit.parents, (parent) ->
-      qGetCommit({user: user, repo: repo, sha: parent.sha})
+  commits = req.body.commits
+  console.log 'commits', commits.length
 
-    Q.all(qParentCommits).then (parentCommits) ->
-      console.log 'parent commits', (sha for {sha} in parentCommits)
-      # Parse commit messages to get PT story id from `story-id:` lines.
-      storyIds = _.map parentCommits, (c) -> parseCommitMessage(c)
-      debug 'story ids for merge', storyIds
-      # Use `compact` to remove nulls (merge commit has no story id in the
-      # commit message).
-      return _.compact(storyIds)[0]
+  storyIds = _.compact (parseCommitMessage(id) for commit in commits)
+  console.log "Found story ids to finish: ", storyIds
 
-  # Get the GitHub API client.
-  ghclient = req.app.get 'github_client'
-  gdapi = ghclient.getGitdataApi()
-  # Construct promises-aware wrapper.
-  qGetCommit = Q.nbind gdapi.getCommit, gdapi
-  [user, repo] = req.body.repository.full_name.split '/'
+  Q.allSettled((pt.setStoryState(id, 'finished') for id in storyIds))
 
-  # Get commit details from GH (to get parents)
-  commits = _.map req.body.commits, (commit) ->
-    qGetCommit({user: user, repo: repo, sha: commit.id})
-
-  Q.all(commits)
-
-    .then (commits) ->
-      console.log 'commits', commits.length
-
-      # Get merge commits.
-      merges = _.filter commits, ({parents}) -> parents.length > 1
-      console.log 'merges', merges.length
-
-      qStoryIds = (getMergedStoryId(merge) for merge in merges)
-      return Q.all(qStoryIds)
-
-    .then (ids) ->
-      console.log 'story ids', ids
-      # Filter out `undefined` values (happens when no parent commit 
-      # in the merge has `story-id` in the commit msg.
-      ids = _.compact ids
-      Q.all _.map ids, (id) -> pt.setStoryState(id, 'finished')
-
-    .then ->
-      res.send 'ok'
+    .then (promises) ->
+      rejects = _.filter(promises, state: rejected)
+      if rejects.length > 0
+        ids = (r.reason?.id for r in rejects)
+        return res.send(500, "stories #{ids} could not have been finished.")
+      else
+        return res.send("All stories updated successfully.")
 
     .fail (err) ->
       console.error "error", err
