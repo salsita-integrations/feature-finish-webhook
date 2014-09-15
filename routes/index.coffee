@@ -42,7 +42,7 @@ router.post '/finish', (req, res) ->
   Q.allSettled((pt.setStoryState(id, 'finished') for id in storyIds))
 
     .then (promises) ->
-      rejects = _.filter(promises, state: rejected)
+      rejects = _.filter(promises, state: 'rejected')
       if rejects.length > 0
         ids = (r.reason?.id for r in rejects)
         return res.send(500, "stories #{ids} could not have been finished.")
