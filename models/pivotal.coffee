@@ -39,7 +39,7 @@ exports.setStoryState = (storyId, state) ->
         options = {
           method: 'PUT'
           url: "#{ROOT_URL}/projects/#{project.id}/stories/#{storyId}"
-          body: JSON.stringify({current_state: state})
+          body: {current_state: state}
           headers: {
             'X-TrackerToken': process.env.PT_TOKEN
           }
