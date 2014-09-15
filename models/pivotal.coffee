@@ -63,7 +63,7 @@ exports.setStoryState = (storyId, state) ->
         console.log "No relevant story found..."
         return Q.reject({id: storyId})
       # Yay, updating story state succeeded!
-      console.log "Story state updated!"
+      console.log "Story state updated!", p.value
       return Q("done")
 
     .fail (err) ->
