@@ -8,6 +8,7 @@ getProjects = ->
   defer = Q.defer()
   options = {
     url: "#{ROOT_URL}/projects"
+    json: true
     headers: {
       'X-TrackerToken': process.env.PT_TOKEN
     }
@@ -17,7 +18,7 @@ getProjects = ->
     if err or res.statusCode != 200
       console.error 'getProjects error:', (err or body)
       return defer.reject(err or new Error(body))
-    defer.resolve(JSON.parse(body))
+    defer.resolve(body)
   return defer.promise
 
 
@@ -49,7 +50,7 @@ exports.setStoryState = (storyId, state) ->
           if err or res.statusCode != 200
             console.error "update story error:", (err or body)
             return defer.reject(err or new Error(body))
-          defer.resolve(JSON.parse(body))
+          defer.resolve(body)
         defer.promise
       # Get all promises regardless of their resolution state (so that we can
       # ignore errors).
