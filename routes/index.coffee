@@ -31,6 +31,7 @@ router.post '/finish', (req, res) ->
   # We're only interested in pushes on `develop`.
   return unless (req.body.ref == "refs/heads/develop")
 
+  debug "body", req.body
   debug 'commits: ', JSON.stringify req.body.commits, null, 2
 
   commits = req.body.commits
