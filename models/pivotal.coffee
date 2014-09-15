@@ -35,7 +35,7 @@ exports.setStoryState = (storyId, state) ->
     # We'll get a HTTP 404 if the story doesn't belong to the project.
     .then (projects) ->
       console.log 'projects', (id for {id} in projects)
-      qStories = _.map projects, (project) ->
+      qUpdates = _.map projects, (project) ->
         defer = Q.defer()
         options = {
           method: 'PUT'
@@ -54,7 +54,7 @@ exports.setStoryState = (storyId, state) ->
         defer.promise
       # Get all promises regardless of their resolution state (so that we can
       # ignore errors).
-      Q.allSettled(qStories)
+      Q.allSettled(qUpdates)
 
     # We've pinged all the projects. Let's see if we succeeded.
     .then (settledPromises) ->
