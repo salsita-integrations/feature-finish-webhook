@@ -36,7 +36,7 @@ router.post '/finish', (req, res) ->
   commits = req.body.commits
   console.log 'commits', commits.length
 
-  storyIds = _.compact (parseCommitMessage(id) for commit in commits)
+  storyIds = _.uniq _.compact (parseCommitMessage(id) for commit in commits)
   console.log "Found story ids to finish: ", storyIds
 
   Q.allSettled((pt.setStoryState(id, 'finished') for id in storyIds))
